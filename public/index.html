@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Toy Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin: 0 0 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .form-group button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .product-list {
+      margin-top: 40px;
+    }
+
+    .product-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .product-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-info h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .product-info p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .product-actions button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit-product-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+    }
+
+    .edit-product-modal-content {
+      position: relative;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    .edit-product-modal-content h2 {
+      margin: 0 0 20px;
+    }
+
+    .edit-product-modal-content .form-group {
+      margin-bottom: 20px;
+    }
+
+    .edit-product-modal-content .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .edit-product-modal-content .form-group input[type="text"],
+    .edit-product-modal-content .form-group input[type="number"],
+    .edit-product-modal-content .form-group input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .edit-product-modal-content .form-group button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit-product-modal-content .form-group button.cancel-button {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Toy Store</h1>
+
+  <div class="container">
+    <h2>Add Product</h2>
+    <form id="add-product-form">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" required>
+      </div>
+      <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+      </div>
+      <div class="form-group">
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+      </div>
+      <div class="form-group">
+        <button type="submit">Add Product</button>
+      </div>
+    </form>
+
+    <div class="product-list">
+      <h2>Product List</h2>
+      <div id="products"></div>
+    </div>
+  </div>
+
+  <div class="edit-product-modal" id="edit-product-modal">
+    <div class="edit-product-modal-content">
+      <h2>Edit Product</h2>
+      <form id="edit-product-form">
+        <input type="hidden" id="edit-product-id" name="id">
+        <div class="form-group">
+          <label for="edit-name">Name:</label>
+          <input type="text" id="edit-name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-category">Category:</label>
+          <input type="text" id="edit-category" name="category" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-price">Price:</label>
+          <input type="number" id="edit-price" name="price" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-image">Image:</label>
+          <input type="file" id="edit-image" name="image" accept="image/*" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Save Changes</button>
+          <button type="button" class="cancel-button" onclick="closeEditProductModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let editingProductId = '';
+
+    function createProductItem(product) {
+      const productItem = document.createElement('div');
+      productItem.className = 'product-item';
+
+      const productImage = document.createElement('img');
+      productImage.className = 'product-image';
+      productImage.src = '/images/' + product.image;
+      productImage.alt = product.name;
+      productItem.appendChild(productImage);
+
+      const productInfo = document.createElement('div');
+      productInfo.className = 'product-info';
+
+      const productName = document.createElement('h3');
+      productName.textContent = 'Name: ' + product.name;
+      productInfo.appendChild(productName);
+
+      const productCategory = document.createElement('p');
+      productCategory.textContent = 'Category: ' + product.category;
+      productInfo.appendChild(productCategory);
+
+      const productPrice = document.createElement('p');
+      productPrice.textContent = 'Price: $' + product.price;
+      productInfo.appendChild(productPrice);
+
+      productItem.appendChild(productInfo);
+
+      const productActions = document.createElement('div');
+      productActions.className = 'product-actions';
+
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.addEventListener('click', function() {
+        openEditProductModal(product);
+      });
+      productActions.appendChild(editButton);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', function() {
+        deleteProduct(product._id);
+      });
+      productActions.appendChild(deleteButton);
+
+      productItem.appendChild(productActions);
+
+      return productItem;
+    }
+
+    function fetchProducts() {
+      fetch('/toys')
+        .then(response => response.json())
+        .then(data => {
+          console.log('Toys fetched successfully:', data);
+          const productList = document.getElementById('products');
+          productList.innerHTML = '';
+          data.forEach(toy => {
+            const productItem = createProductItem(toy);
+            productList.appendChild(productItem);
+          });
+        })
+        .catch(error => console.error('Error fetching toys:', error));
+    }
+
+    function addProduct(event) {
+      event.preventDefault();
+
+      const form = document.getElementById('add-product-form');
+      const formData = new FormData(form);
+
+      fetch('/toys', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Toy created successfully:', data);
+          form.reset();
+          fetchProducts();
+        })
+        .catch(error => console.error('Error creating toy:', error));
+    }
+
+    function deleteProduct(productId) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        fetch(`/toys/${productId}`, {
+          method: 'DELETE'
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Toy deleted successfully:', data);
+            fetchProducts();
+          })
+          .catch(error => console.error('Error deleting toy:', error));
+      }
+    }
+
+    function openEditProductModal(product) {
+      const modal = document.getElementById('edit-product-modal');
+      const editForm = document.getElementById('edit-product-form');
+      const editProductId = document.getElementById('edit-product-id');
+      const editName = document.getElementById('edit-name');
+      const editCategory = document.getElementById('edit-category');
+      const editPrice = document.getElementById('edit-price');
+      const editImage = document.getElementById('edit-image');
+
+      editingProductId = product._id;
+      editProductId.value = product._id;
+      editName.value = product.name;
+      editCategory.value = product.category;
+      editPrice.value = product.price;
+      editImage.value = '';
+
+      modal.style.display = 'block';
+    }
+
+    function closeEditProductModal() {
+      const modal = document.getElementById('edit-product-modal');
+      modal.style.display = 'none';
+    }
+
+    function updateProduct(event) {
+  event.preventDefault();
+
+  const form = document.getElementById('edit-product-form');
+  const formData = new FormData(form);
+
+  // Create an object from the formData
+  const updatedProduct = {};
+  for (let [key, value] of formData) {
+    updatedProduct[key] = value;
+  }
+
+  // Assign the image filename to the updatedProduct object
+  updatedProduct.image = formData.get('image').name;
+
+  fetch(`/toys/${editingProductId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedProduct)
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Product updated successfully:', data);
+      closeEditProductModal();
+      fetchProducts();
+    })
+    .catch(error => console.error('Error updating product:', error));
+}
+
+    document.getElementById('add-product-form').addEventListener('submit', addProduct);
+    document.getElementById('edit-product-form').addEventListener('submit', updateProduct);
+
+    fetchProducts();
+  </script>
+</body>
+</html>
